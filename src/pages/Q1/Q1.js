@@ -12,6 +12,10 @@ const Q1 = () => {
 
   // Prompt user for camera access when component mounts
   useEffect(() => {
+    startMediaStream();
+  }, []);
+
+  const startMediaStream = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -19,10 +23,10 @@ const Q1 = () => {
         setMediaStream(stream);
       })
       .catch((err) => console.error("Error accessing media devices: ", err));
-  }, []);
+  };
 
   const startRecording = () => {
-    if (videoRef.current && !recording) {
+    if (videoRef.current && !recording && mediaStream) {
       const mediaRecorder = new MediaRecorder(mediaStream);
       const chunks = [];
 
@@ -36,6 +40,9 @@ const Q1 = () => {
         setRecordedVideoUrl(url);
         setRecordedChunks(chunks);
         setRecording(false);
+
+        // Upload recorded video to Google Drive
+        //uploadVideoToDrive(blob);
       };
 
       mediaRecorder.start();
@@ -45,20 +52,43 @@ const Q1 = () => {
 
   const stopRecording = () => {
     if (mediaStream && recording) {
-      mediaStream.getTracks().forEach((track) => {
-        track.stop();
-      });
+      const tracks = mediaStream.getTracks();
+      tracks.forEach((track) => track.stop());
+      setRecording(false);
+      setMediaStream(null);
     }
   };
 
   const recordAgain = () => {
     setRecordedVideoUrl(null);
     setRecordedChunks([]);
-    startRecording();
+    startMediaStream();
   };
 
   const moveToNextQuestion = () => {
     navigate("/q2");
+  };
+
+  // Function to upload recorded video to Google Drive
+  const uploadVideoToDrive = async (videoBlob) => {
+    try {
+      const formData = new FormData();
+      formData.append("video", videoBlob, "recorded-video.webm");
+
+      const response = await fetch("http://localhost:3001/api/upload-video", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        console.log("Video uploaded successfully!");
+        // Optionally handle response from server
+      } else {
+        console.error("Failed to upload video:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error uploading video:", error);
+    }
   };
 
   return (
