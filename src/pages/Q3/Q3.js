@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Q3 = () => {
-  const [question] = useState("Q3?");
+  const [question] = useState("Q1?");
   const videoRef = useRef(null);
   const [mediaStream, setMediaStream] = useState(null);
   const [recording, setRecording] = useState(false);
@@ -129,7 +129,7 @@ const Q3 = () => {
             onClick={moveToNextQuestion}
             className="px-4 py-2 rounded-lg text-white bg-blue-500 hover:bg-blue-600"
           >
-            Continue
+            Next Question
           </button>
         </div>
       )}
