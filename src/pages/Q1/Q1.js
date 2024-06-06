@@ -35,14 +35,11 @@ const Q1 = () => {
       };
 
       mediaRecorder.onstop = () => {
+        setRecordedChunks(chunks);
         const blob = new Blob(chunks, { type: "video/webm" });
         const url = URL.createObjectURL(blob);
         setRecordedVideoUrl(url);
-        setRecordedChunks(chunks);
         setRecording(false);
-
-        // Upload recorded video to Google Drive
-        //uploadVideoToDrive(blob);
       };
 
       mediaRecorder.start();
@@ -65,7 +62,12 @@ const Q1 = () => {
     startMediaStream();
   };
 
-  const moveToNextQuestion = () => {
+  const moveToNextQuestion = async () => {
+    if (recordedChunks.length > 0) {
+      const blob = new Blob(recordedChunks, { type: "video/webm" });
+      //uploadVideoToDrive(blob);
+    }
+    // Navigate to the next question
     navigate("/q2");
   };
 

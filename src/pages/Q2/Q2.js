@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Q2 = () => {
-  const [question] = useState("Q1?");
+  const [question] = useState("Q2?");
   const videoRef = useRef(null);
   const [mediaStream, setMediaStream] = useState(null);
   const [recording, setRecording] = useState(false);
