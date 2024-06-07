@@ -8,6 +8,8 @@ const Q2 = () => {
   const [recording, setRecording] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const name = localStorage.getItem("name");
   const navigate = useNavigate();
 
   // Prompt user for camera access when component mounts
@@ -64,32 +66,31 @@ const Q2 = () => {
 
   const moveToNextQuestion = async () => {
     if (recordedChunks.length > 0) {
+      setSubmitting(true);
       const blob = new Blob(recordedChunks, { type: "video/mp4" });
-      //uploadVideoToDrive(blob);
-    }
-    // Navigate to the next question
-    navigate("/q3");
-  };
-
-  // Function to upload recorded video to Google Drive
-  const uploadVideoToDrive = async (videoBlob) => {
-    try {
       const formData = new FormData();
-      formData.append("video", videoBlob, "recorded-video.mp4");
+      formData.append("file", blob, `${name}_q2.mp4`);
 
-      const response = await fetch("http://localhost:3001/api/upload-video", {
-        method: "POST",
-        body: formData,
-      });
+      try {
+        const response = await fetch("http://localhost:3001/upload-video", {
+          method: "POST",
+          body: formData,
+        });
 
-      if (response.ok) {
-        console.log("Video uploaded successfully!");
-        // Optionally handle response from server
-      } else {
-        console.error("Failed to upload video:", response.statusText);
+        if (response.ok) {
+          console.log("Video uploaded successfully!");
+          setSubmitting(false);
+          navigate("/q3");
+        } else {
+          console.error("Failed to upload video:", response.statusText);
+          setSubmitting(false);
+          alert("Failed to upload video. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error uploading video:", error);
+        setSubmitting(false);
+        alert("Error uploading video. Please try again.");
       }
-    } catch (error) {
-      console.error("Error uploading video:", error);
     }
   };
 
@@ -130,9 +131,15 @@ const Q2 = () => {
           <button
             onClick={moveToNextQuestion}
             className="px-4 py-2 rounded-lg text-white bg-blue-500 hover:bg-blue-600"
+            disabled={submitting}
           >
-            Next Question
+            {submitting ? "Submitting..." : "Next Question"}
           </button>
+        </div>
+      )}
+      {submitting && (
+        <div className="mt-4 text-blue-500 font-semibold">
+          Submitting video answer... Please wait.
         </div>
       )}
     </div>
