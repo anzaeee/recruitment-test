@@ -42,12 +42,12 @@ const Home = () => {
         navigate("/q1", { state: { name, email } });
       } else {
         setSubmitting(false);
-        alert("Failed to create folder on the server. Please try again.");
+        alert("Server error. Please try again later or in a while.");
       }
     } catch (error) {
       console.error("Error creating folder:", error);
       setSubmitting(false);
-      alert("Error creating folder. Please try again.");
+      alert("Server error. Please try again later or in a while.");
     }
   };
 
