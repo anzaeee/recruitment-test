@@ -9,7 +9,8 @@ const Q3 = () => {
   const [recordedChunks, setRecordedChunks] = useState([]);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const name = localStorage.getItem("name");
+  const name = sessionStorage.getItem("name");
+  const folderId = sessionStorage.getItem("folderId"); // Retrieve folderId from session storage
   const navigate = useNavigate();
 
   // Prompt user for camera access when component mounts
@@ -70,6 +71,7 @@ const Q3 = () => {
       const blob = new Blob(recordedChunks, { type: "video/mp4" });
       const formData = new FormData();
       formData.append("file", blob, `${name}_q3.mp4`);
+      formData.append("folderId", folderId);
 
       try {
         const response = await fetch("http://localhost:3001/upload-video", {

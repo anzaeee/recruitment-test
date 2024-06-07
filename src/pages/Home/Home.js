@@ -1,28 +1,54 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Home() {
+const Home = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Load data from local storage if available
-    const storedName = localStorage.getItem("name");
-    const storedEmail = localStorage.getItem("email");
-    if (storedName && storedEmail) {
-      setName(storedName);
-      setEmail(storedEmail);
-    }
-  }, []);
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    localStorage.setItem("name", name);
-    localStorage.setItem("email", email);
-    setSubmitted(true);
-    navigate("/q1", { state: { name, email } });
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setFormError("Invalid email format");
+      return;
+    }
+
+    // Store name and email in sessionStorage
+    sessionStorage.setItem("name", name);
+    sessionStorage.setItem("email", email);
+
+    setSubmitting(true);
+
+    try {
+      // Send a POST request to create the folder on the backend
+      const response = await fetch("http://localhost:3001/create-folder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ folderName: name }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const folderId = data.folderId;
+        sessionStorage.setItem("folderId", folderId);
+        setSubmitting(false);
+        navigate("/q1", { state: { name, email } });
+      } else {
+        setSubmitting(false);
+        alert("Failed to create folder on the server. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error creating folder:", error);
+      setSubmitting(false);
+      alert("Error creating folder. Please try again.");
+    }
   };
 
   return (
@@ -44,6 +70,9 @@ export default function Home() {
         <p className="mb-4">
           When you click Stop recording, WAIT for the video to finish processing
           and THEN you can replay it.
+        </p>
+        <p className="mb-2 text-red-800">
+          Note: Please use Firefox, Chrome, or Edge for the best experience.
         </p>
         <form onSubmit={handleSubmit} className="text-center">
           <div className="mb-4">
@@ -72,9 +101,11 @@ export default function Home() {
               className="w-full p-2 border rounded-lg"
             />
           </div>
+          {formError && <p className="text-red-500 mb-2">{formError}</p>}
           <button
             type="submit"
             className="px-4 py-2 rounded-lg text-white bg-green-500 hover:bg-green-600"
+            disabled={submitting}
           >
             Start Test
           </button>
@@ -82,4 +113,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+export default Home;
