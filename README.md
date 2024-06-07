@@ -29,9 +29,9 @@ Open http://localhost:3000 to view it in your browser.
 ### Starting the Backend
 
 1. Navigate to the backend directory:
-   `bash
- cd backend
- npm i
- node server.js
- `
+   ```bash
+   cd backend
+   npm i
+   node server.js
+   ```
    Open http://localhost:3001 to view it in your browser.
