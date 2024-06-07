@@ -9,9 +9,13 @@ const Q1 = () => {
   const [recordedChunks, setRecordedChunks] = useState([]);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [maxRecordingDuration] = useState(60); // Maximum recording duration in seconds (1 minute)
+  const [timer, setTimer] = useState(0); // Timer to track elapsed recording time
   const name = sessionStorage.getItem("name");
   const folderId = sessionStorage.getItem("folderId"); // Retrieve folderId from session storage
   const navigate = useNavigate();
+
+  const [intervalId, setIntervalId] = useState(null); // State to hold interval id
 
   // Prompt user for camera access when component mounts
   useEffect(() => {
@@ -33,6 +37,7 @@ const Q1 = () => {
     if (videoRef.current && !recording && mediaStream) {
       const mediaRecorder = new MediaRecorder(mediaStream);
       const chunks = [];
+      let timeElapsed = 0;
 
       mediaRecorder.ondataavailable = (e) => {
         chunks.push(e.data);
@@ -46,8 +51,27 @@ const Q1 = () => {
         setRecording(false);
       };
 
+      // Start recording
       mediaRecorder.start();
       setRecording(true);
+
+      // Start timer to check elapsed time
+      const id = setInterval(() => {
+        timeElapsed += 1;
+        setTimer(timeElapsed);
+
+        // Check if maximum duration exceeded
+        if (timeElapsed >= maxRecordingDuration) {
+          clearInterval(id);
+          mediaRecorder.stop();
+          alert(
+            "Maximum recording duration exceeded (1 minute). Please re-record or move to the next question."
+          );
+        }
+      }, 1000); // Update timer every second (1000 milliseconds)
+
+      // Store interval id in state
+      setIntervalId(id);
     }
   };
 
@@ -57,6 +81,7 @@ const Q1 = () => {
       tracks.forEach((track) => track.stop());
       setRecording(false);
       setMediaStream(null);
+      clearInterval(intervalId); // Clear timer interval
     }
   };
 
@@ -64,6 +89,7 @@ const Q1 = () => {
     setRecordedVideoUrl(null);
     setRecordedChunks([]);
     startMediaStream();
+    setTimer(0); // Reset timer
   };
 
   const moveToNextQuestion = async () => {
@@ -112,6 +138,12 @@ const Q1 = () => {
           </video>
         )}
       </div>
+      {/* Display timer */}
+      {recording && (
+        <div className="text-center mb-4 text-sm text-gray-500">
+          Recording: {timer} sec / {maxRecordingDuration} sec
+        </div>
+      )}
       {!recordedVideoUrl ? (
         <button
           onClick={recording ? stopRecording : startRecording}
