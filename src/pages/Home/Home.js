@@ -62,8 +62,8 @@ const Home = () => {
           Welcome and Congratulations on making it this far!
         </h1>
         <p className="mb-4">
-          Please record ONE video with your answer to the question(s) that will
-          be shown to you on the screen.
+          Please record a video with your answer to the question(s) that will be
+          shown to you on the screen.
         </p>
         <p className="mb-4">
           Use your COMPUTER webcam, NOT a phone. Simply imagine you are sitting
@@ -72,12 +72,13 @@ const Home = () => {
           impressive it will be.
         </p>
         <p className="mb-4">
-          When you click Stop recording, WAIT for the video to finish processing
-          and THEN you can replay it.
+          When you click Stop recording, you may review your answer. Once you
+          click the "Next Question" button, you'll be shown the rest of the
+          questions.
         </p>
         <p className="mb-2 text-red-800">
           Note: Please use Firefox, Chrome, or Edge to be able to playback your
-          recording.
+          recording. Safari is not supported.
         </p>
         <form onSubmit={handleSubmit} className="text-center">
           <div className="mb-4">
