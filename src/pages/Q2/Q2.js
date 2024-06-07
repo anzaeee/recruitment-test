@@ -35,14 +35,11 @@ const Q2 = () => {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: "video/webm" });
+        setRecordedChunks(chunks);
+        const blob = new Blob(chunks, { type: "video/mp4" });
         const url = URL.createObjectURL(blob);
         setRecordedVideoUrl(url);
-        setRecordedChunks(chunks);
         setRecording(false);
-
-        // Upload recorded video to Google Drive
-        //uploadVideoToDrive(blob);
       };
 
       mediaRecorder.start();
@@ -65,7 +62,12 @@ const Q2 = () => {
     startMediaStream();
   };
 
-  const moveToNextQuestion = () => {
+  const moveToNextQuestion = async () => {
+    if (recordedChunks.length > 0) {
+      const blob = new Blob(recordedChunks, { type: "video/mp4" });
+      //uploadVideoToDrive(blob);
+    }
+    // Navigate to the next question
     navigate("/q3");
   };
 
@@ -73,7 +75,7 @@ const Q2 = () => {
   const uploadVideoToDrive = async (videoBlob) => {
     try {
       const formData = new FormData();
-      formData.append("video", videoBlob, "recorded-video.webm");
+      formData.append("video", videoBlob, "recorded-video.mp4");
 
       const response = await fetch("http://localhost:3001/api/upload-video", {
         method: "POST",

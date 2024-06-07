@@ -36,7 +36,7 @@ const Q1 = () => {
 
       mediaRecorder.onstop = () => {
         setRecordedChunks(chunks);
-        const blob = new Blob(chunks, { type: "video/webm" });
+        const blob = new Blob(chunks, { type: "video/mp4" });
         const url = URL.createObjectURL(blob);
         setRecordedVideoUrl(url);
         setRecording(false);
@@ -64,7 +64,7 @@ const Q1 = () => {
 
   const moveToNextQuestion = async () => {
     if (recordedChunks.length > 0) {
-      const blob = new Blob(recordedChunks, { type: "video/webm" });
+      const blob = new Blob(recordedChunks, { type: "video/mp4" });
       //uploadVideoToDrive(blob);
     }
     // Navigate to the next question
@@ -75,7 +75,7 @@ const Q1 = () => {
   const uploadVideoToDrive = async (videoBlob) => {
     try {
       const formData = new FormData();
-      formData.append("video", videoBlob, "recorded-video.webm");
+      formData.append("video", videoBlob, "recorded-video.mp4");
 
       const response = await fetch("http://localhost:3001/api/upload-video", {
         method: "POST",
