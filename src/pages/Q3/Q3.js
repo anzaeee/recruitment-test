@@ -15,6 +15,7 @@ const Q3 = () => {
 
   // Prompt user for camera access when component mounts
   useEffect(() => {
+    document.title = "Recruitment Test - Q3";
     startMediaStream();
   }, []);
 

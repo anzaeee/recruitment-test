@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
@@ -51,6 +51,10 @@ const Home = () => {
     }
   };
 
+  useEffect(() => {
+    document.title = "Recruitment Test - Foretheta";
+  }, []);
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 text-black">
       <div className="text-center bg-white p-8 rounded-lg shadow-md w-full max-w-md">
@@ -72,7 +76,8 @@ const Home = () => {
           and THEN you can replay it.
         </p>
         <p className="mb-2 text-red-800">
-          Note: Please use Firefox, Chrome, or Edge for the best experience.
+          Note: Please use Firefox, Chrome, or Edge to be able to playback your
+          recording.
         </p>
         <form onSubmit={handleSubmit} className="text-center">
           <div className="mb-4">

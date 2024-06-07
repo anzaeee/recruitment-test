@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const Credits = () => {
+  const name = sessionStorage.getItem("name");
+  useEffect(() => {
+    document.title = "Recruitment Test - Credits";
+  }, []);
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 text-black">
       <div className="text-center bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-4">Congratulations!</h1>
         <p className="mb-4">
-          You have successfully completed the test. Well done!
+          You have successfully completed the test, {name}. Well done!
         </p>
         <p className="mb-4">
           Thank you for participating. We appreciate your time and effort.
